@@ -1,47 +1,14 @@
-class DependencyManager:
-    def __init__(self, graph):
-        self.graph = graph
-        self.visited = set()
-        self.visiting = set()  # для обнаружения циклов
-        self.install_order = []
+from AssignmentProblem import AssignmentProblem
 
-    def dfs(self, lib):
-        if lib in self.visiting:
-            raise Exception(f"Обнаружен цикл зависимостей с библиотекой {lib}")
 
-        if lib in self.visited:
-            return
+if __name__ == "__main__":
+    N = 4
 
-        self.visiting.add(lib)
+    problem = AssignmentProblem(N)
+    problem.print_cost_matrix()
 
-        for dependency in self.graph.get(lib, []):
-            self.dfs(dependency)
+    flow, min_cost = problem.solve()
 
-        self.visiting.remove(lib)
-        self.visited.add(lib)
-        self.install_order.append(lib)
-
-    def resolve(self, root):
-        self.dfs(root)
-        return self.install_order
-
-dependencies = {
-    "Проект": ["Lib1", "Lib2", "Lib3"],
-    "Lib1": ["Lib4"],
-    "Lib4": ["Lib5", "Lib6"],
-    "Lib2": ["Lib6", "Lib7"],
-    "Lib3": [],
-    "Lib5": [],
-    "Lib6": [],
-    "Lib7": []
-}
-
-manager = DependencyManager(dependencies)
-
-try:
-    order = manager.resolve("Проект")
-    print("Порядок установки библиотек:")
-    for lib in order:
-        print(lib)
-except Exception as e:
-    print(e)
+    print("\nРезультат:")
+    print("Максимальный поток:", flow)
+    print("Минимальная стоимость:", min_cost)
